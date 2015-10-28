@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def usage()
    puts "Usage : " + File.basename(__FILE__) + "[-v][-h]{-u|-l}"
    puts "   Example(1) : " + File.basename(__FILE__) + ' [-v][-h] -u url'
@@ -12,17 +13,29 @@ def get_payloads()
    payloads = [
       "README.md",
       ".git/logs/HEAD"
-   ]   
+   ]
    return payloads
 end
 
 def webminer(url)
    payloads = get_payloads
-   for payload in payloads do 
+   for payload in payloads do
       attack = 'http://' + url + '/' + payload
-      res = HttpRequest.new.get attack
-      puts attack + ":" + res["status"]
+      status = -1
+      while status.to_i < 0 or redirect?(status)
+         res = HttpRequest.new.get attack
+         status = res["status"]
+         puts attack + ":" + status
+         if redirect?(status)
+            print "-> "
+            attack = res["location"]
+         end
+      end
    end
+end
+
+def redirect?(status)
+  (300..399).include?(status.to_i)
 end
 
 def __main__(argv)
@@ -46,5 +59,3 @@ def __main__(argv)
       usage
    end
 end
-
-
