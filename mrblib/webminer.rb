@@ -18,12 +18,26 @@ def get_payloads()
 end
 
 def webminer(url)
+   flag = false
    payloads = get_payloads
+   timeout = Timeout.new
+
+   Signal.trap(:ALRM) { |signo|
+      flag=true
+   }
+
    for payload in payloads do
       attack = 'http://' + url + '/' + payload
       status = -1
       while status.to_i < 0 or redirect?(status)
-         res = HttpRequest.new.get attack
+         begin
+            timeout.alarm(5)
+            res = HttpRequest.new.get attack
+         rescue
+            puts "[TIMEOUT] #{attack}"
+            flag = false
+            return
+         end
          status = res["status"]
          puts attack + ":" + status
          if redirect?(status)

@@ -6,6 +6,7 @@ def gem_config(conf)
 
   conf.gem :git => 'https://github.com/mttech/mruby-getopts.git'
   conf.gem :git => 'https://github.com/matsumoto-r/mruby-httprequest.git'
+  conf.gem :git => 'https://github.com/ksss/mruby-signal.git'
   conf.gem :github => "kou/mruby-pp"
 
 end
