@@ -34,11 +34,15 @@ def webminer(url)
             timeout.alarm(5)
             res = HttpRequest.new.get attack
          rescue
+            timeout.alarm(0)
             puts "[TIMEOUT] #{attack}"
             flag = false
             return
          end
          status = res["status"]
+         if status.instance_of?(Array) 
+            status = status[0]
+         end 
          puts attack + ":" + status
          if redirect?(status)
             print "-> "
